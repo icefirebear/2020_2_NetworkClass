@@ -1,7 +1,6 @@
 const http = require("http");
 const url = require("url");
 var querystring = require("querystring");
-const { query } = require("express");
 //#region get방식
 var server = http
   .createServer(function (req, res) {
@@ -85,3 +84,43 @@ function showForm(res) {
     `);
   res.end(`</html>`);
 }
+
+const http = require("http");
+const fs = require("fs");
+const querystring = require("querystring");
+const url = require("url");
+const PORT = 8080;
+
+const server = http
+  .createServer((req, res) => {
+    if (req.url === "/favicon.ico") {
+      res.end();
+      return;
+    }
+    var result = 0;
+    res.writeHead(200, { "Content-Type": "text/html;charset=utf-8" });
+    fs.createReadStream("./calculator.html").pipe(res);
+    var parsedUrl = url.parse(req.url);
+    var parsedQuery = querystring.parse(parsedUrl.query, "&", "=");
+    if (parsedQuery.operator == "add") {
+      result = parseInt(parsedQuery.num1, 10) + parseInt(parsedQuery.num2, 10);
+      showForm(res, result);
+    } else if (parsedQuery.operator == "subtract") {
+      result = parseInt(parsedQuery, num1, 10) - parseInt(parsedQuery.num2, 10);
+      showForm(res, result);
+    } else if (parsedQuery.operator == "multiply") {
+      result = parseInt(parsedQuery, num1, 10) * parseInt(parsedQuery.num2, 10);
+      showForm(res, result);
+    } else if (parsedQuery.operator == "divide") {
+      result = parseInt(parsedQuery, num1, 10) / parseInt(parsedQuery.num2, 10);
+      showForm(res, result);
+    }
+  })
+  .listen(PORT, () => {
+    console.log("Server listening on port");
+  });
+
+const showForm = (res, result) => {
+  res.write(`<h1>result : ${result}</h1>`);
+  res.end(`<a href='http://localhost:${PORT}>돌아가기</a>`);
+};
